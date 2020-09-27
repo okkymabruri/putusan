@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
 # Importing packages
-from selenium import webdriver
+from selenium import webdriver # webdriver from selenium framework to load web
+import pandas as pd # pandas library fpr data processing
+import time # time library to manipulate time (pause, etc)
 
+# Webdriver setup, you can use Chrome or Firefor
 options = webdriver.ChromeOptions()
-# options = webdriver.FirefoxOptions()
-options.add_argument("disable-infobars")
-options.add_argument("--disable-extensions")
-import pandas as pd
-import time
-
-driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver')
+# options = webdriver.FirefoxOptions()  # if use firefox (firefox fast than chrome but more inconsistency
+options.add_argument("disable-infobars") # add option to disable info bar
+options.add_argument("--disable-extensions") # add option to disable browser extension
+driver = webdriver.Chrome(chrome_options=options, executable_path='/usr/local/bin/chromedriver') # load driver chrome
 # driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/local/bin/geckodriver')
 driver.delete_all_cookies()
 
+# Create empty dataframe
 data = pd.DataFrame(columns=[
     'Nomor',
     'ParaPihak',
@@ -34,7 +35,7 @@ data = pd.DataFrame(columns=[
     'Status',
     'Laman'])
 
-
+# Function for handle error & more flexible
 def safe_execute(function):
     value = []
     getvalue = []
@@ -51,26 +52,29 @@ def safe_execute(function):
 link = []
 for z in range(1, 23):
     link.append('//section/div/div[2]/div[' + str(z) + ']/div/strong/a')
-    # link.append('//*[@id="content"]/div/div[2]/div[' + str(z) + ']/div/strong/a')
-for i in range(1, 138):
-    putusan = 'https://putusan3.mahkamahagung.go.id/search.html?q=pilkada&page='
-    driver.get(putusan + str(i))
 
+# Open each page, putusan3.mahkamahagung.go.id/search.html?q=pilkada has 138 pages
+for i in range(1, 138):
+    page = 'https://putusan3.mahkamahagung.go.id/search.html?q=pilkada&page='
+    driver.get(page + str(i))
+
+    # Get url, each pages contain 19-22 pages
     url = []
     for j in range(22):
         items = driver.find_elements_by_xpath(link[j])
-
         for item in items:
             href = item.get_attribute('href')
             url.append(href)
-    print('Halaman ' + str(i))
+    print('Page ' + str(i))
 
+    # Open each url
     for k in range(len(url)):
         driver.get(url[k])
         time.sleep(1)
-        # Xpath = '/html/body/div[1]/section[2]/div/div/section/div/div/div[1]/div/div/div/div[1]/div/ul/table/tbody/'
+
         Xpath = '//*[@id="popular-post-list-sidebar"]/ul/table/tbody/'
 
+        # Get data from each url
         Nomor = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[1]/td[2]'))
         ParaPihak = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[2]/td[2]'))
         TingkatProses = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[3]/td[2]'))
@@ -90,6 +94,8 @@ for i in range(1, 138):
         Status = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[17]/td[2]'))
         Laman = url[k]
 
+
+        # Add new data in new rows
         data = data.append({
             'Nomor': Nomor,
             'ParaPihak': ParaPihak,
@@ -111,5 +117,8 @@ for i in range(1, 138):
             'Laman': Laman}, ignore_index=True)
 
     print(data)
+
+    # Export to 'output.xlsx'
     data.to_excel("output.xlsx")
+
 driver.quit()
