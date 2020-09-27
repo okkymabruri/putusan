@@ -42,15 +42,12 @@ sudo chmod +x /usr/local/bin/chromedriver
 ```
 pip install selenium
 ```
-atau
-```
-pip install -r requirements.txt
-```
 
 ## Menjalankan Program
 ```
 git clone https://github.com/okkymabruri/putusan-pilkada-scraping.git
 cd putusan-pilkada-scraping/
+pip install -r requirements.txt
 python3 scraping.py
 ```
 
