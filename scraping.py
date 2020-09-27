@@ -2,9 +2,6 @@
 
 # Importing packages
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 options = webdriver.ChromeOptions()
 # options = webdriver.FirefoxOptions()
@@ -37,18 +34,24 @@ data = pd.DataFrame(columns=[
     'Status',
     'Laman'])
 
+
 def safe_execute(function):
-    value = ''
-    try:
-        value = function
-        return value
-    except:
-        return value
+    value = []
+    getvalue = []
+    while True:
+        try:
+            value = function
+            getvalue = value[0].text
+            return getvalue
+        except IndexError:
+            pass
+        return getvalue
+
 
 link = []
 for z in range(1, 23):
-    link.append('//*[@id="content"]/div/div[2]/div[' +  str(z) + ']/div/strong/a')
-
+    link.append('//section/div/div[2]/div[' + str(z) + ']/div/strong/a')
+    # link.append('//*[@id="content"]/div/div[2]/div[' + str(z) + ']/div/strong/a')
 for i in range(1, 138):
     putusan = 'https://putusan3.mahkamahagung.go.id/search.html?q=pilkada&page='
     driver.get(putusan + str(i))
@@ -60,7 +63,7 @@ for i in range(1, 138):
         for item in items:
             href = item.get_attribute('href')
             url.append(href)
-    print('Halaman '+ str(i))
+    print('Halaman ' + str(i))
 
     for k in range(len(url)):
         driver.get(url[k])
@@ -68,23 +71,23 @@ for i in range(1, 138):
         # Xpath = '/html/body/div[1]/section[2]/div/div/section/div/div/div[1]/div/div/div/div[1]/div/ul/table/tbody/'
         Xpath = '//*[@id="popular-post-list-sidebar"]/ul/table/tbody/'
 
-        Nomor = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[1]/td[2]')[0].text)
-        ParaPihak = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[2]/td[2]')[0].text)
-        TingkatProses = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[3]/td[2]')[0].text)
-        Klasifikasi = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[4]/td[2]')[0].text)
-        Tahun = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[5]/td[2]')[0].text)
-        TanggalRegister = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[6]/td[2]')[0].text)
-        LembagaPeradilan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[7]/td[2]')[0].text)
-        JenisLembagaPeradilan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[8]/td[2]')[0].text)
-        HakimKetua = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[9]/td[2]')[0].text)
-        HakimAnggota = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[10]/td[2]')[0].text)
-        Panitera = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[11]/td[2]')[0].text)
-        Amar = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[12]/td[2]')[0].text)
-        CatatanAmar = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[13]/td[2]')[0].text)
-        TanggalMusyawarah = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[14]/td[2]')[0].text)
-        TanggalDibacakan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[15]/td[2]')[0].text)
-        Kaidah = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[16]/td[2]')[0].text)
-        Status = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[17]/td[2]')[0].text)
+        Nomor = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[1]/td[2]'))
+        ParaPihak = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[2]/td[2]'))
+        TingkatProses = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[3]/td[2]'))
+        Klasifikasi = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[4]/td[2]'))
+        Tahun = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[5]/td[2]'))
+        TanggalRegister = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[6]/td[2]'))
+        LembagaPeradilan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[7]/td[2]'))
+        JenisLembagaPeradilan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[8]/td[2]'))
+        HakimKetua = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[9]/td[2]'))
+        HakimAnggota = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[10]/td[2]'))
+        Panitera = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[11]/td[2]'))
+        Amar = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[12]/td[2]'))
+        CatatanAmar = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[13]/td[2]'))
+        TanggalMusyawarah = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[14]/td[2]'))
+        TanggalDibacakan = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[15]/td[2]'))
+        Kaidah = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[16]/td[2]'))
+        Status = safe_execute(driver.find_elements_by_xpath(Xpath + 'tr[17]/td[2]'))
         Laman = url[k]
 
         data = data.append({
@@ -105,7 +108,7 @@ for i in range(1, 138):
             'TanggalDibacakan': TanggalDibacakan,
             'Kaidah': Kaidah,
             'Status': Status,
-            'Laman' : Laman}, ignore_index=True)
+            'Laman': Laman}, ignore_index=True)
 
     print(data)
     data.to_excel("output.xlsx")
