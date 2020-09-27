@@ -34,7 +34,7 @@ sudo apt-get -y install google-chrome-stable
 ```
 wget https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
-mv chromedriver /usr/local/bin
+sudo mv chromedriver /usr/local/bin
 sudo chown root:root /usr/local/bin/chromedriver
 sudo chmod +x /usr/local/bin/chromedriver
 ```
@@ -44,8 +44,22 @@ sudo chmod +x /usr/local/bin/chromedriver
 pip install selenium
 ```
 
+## Run
+```
+git clone https://github.com/okkymabruri/putusan-pilkada-scraping.git
+cd putusan-pilkada-scraping/
+python3 scraping.py
+```
+
+## Catatan
+* Sangat direkomendasikan menggunakan google chrome
+* Tidak disarankan memakai selenium, kecepatannya lambat 
+
+## Next Project
+* Conver to Scrapy
 
 ## Sumber
 
 https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
+
 https://towardsdatascience.com/web-scraping-using-selenium-python-8a60f4cf40ab
