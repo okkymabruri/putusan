@@ -1,13 +1,12 @@
 # Web Scraping Putusan Pilkada di Web Mahkamah Agung Indonesia
 
 
-Program ini digunakan untuk scraping data pelanggaran pilkada di website (https://putusan3.mahkamahagung.go.id/search.html?q=pilkada)[https://putusan3.mahkamahagung.go.id/search.html?q=pilkada]
+Program ini digunakan untuk scraping data pelanggaran pilkada di website [https://putusan3.mahkamahagung.go.id/search.html?q=pilkada](https://putusan3.mahkamahagung.go.id/search.html?q=pilkada)
 
 Silahkan digunakan / dicopy / dimodifikasi agar menjadi bermanfaat.
 
 Tested di Ubuntu 20.04
 
-https://github.com/okkymabruri/putusan-pilkada-scraping
 
 ![scraping1](https://github.com/okkymabruri/putusan-pilkada-scraping/raw/master/image/1.png)
 
