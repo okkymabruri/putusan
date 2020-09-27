@@ -42,7 +42,10 @@ sudo chmod +x /usr/local/bin/chromedriver
 ```
 pip install selenium
 ```
-
+atau
+```
+pip install -r requirements.txt
+```
 
 ## Menjalankan Program
 ```
