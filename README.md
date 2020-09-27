@@ -56,11 +56,11 @@ python3 scraping.py
 * Jika memakai selenium, sangat direkomendasikan menggunakan google chrome
 
 ## Next Project
-* Conver to Scrapy
+* Coba pake Scrapy
 
 ## Sumber
 Thanks to:
 
 * https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
 * https://towardsdatascience.com/web-scraping-using-selenium-python-8a60f4cf40ab
-* PPMN
+* [Perhimpunan Pengembangan Media Nusantara](https://ppmn.or.id/)
