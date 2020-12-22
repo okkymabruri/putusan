@@ -1,4 +1,4 @@
-# Web Scraping Putusan Pilkada di Web Mahkamah Agung Indonesia
+# Putusan Pilkada Mahkamah Agung Indonesia DataScraper
 
 
 Program ini digunakan untuk scraping data pelanggaran pilkada di website [https://putusan3.mahkamahagung.go.id/search.html?q=pilkada](https://putusan3.mahkamahagung.go.id/search.html?q=pilkada)
@@ -32,7 +32,7 @@ sudo apt-get -y install google-chrome-stable
 ```
 #### Instalasi Chrome Driver
 ```
-wget https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip
+wget https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
 sudo mv chromedriver /usr/local/bin
 sudo chown root:root /usr/local/bin/chromedriver
