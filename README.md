@@ -51,13 +51,6 @@ pip install -r requirements.txt
 python3 scraping.py
 ```
 
-## Catatan
-* Tidak disarankan memakai selenium, kecepatannya lambat
-* Jika memakai selenium, sangat direkomendasikan menggunakan google chrome
-
-## Next Project
-* Coba pake Scrapy
-
 ## Sumber
 Thanks to:
 
