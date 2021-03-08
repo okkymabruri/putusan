@@ -46,10 +46,21 @@ parser.add_argument(
     help="(optional) headless",
 )
 
+parser.add_argument(
+    "-sp",
+    "--startpage",
+    required=False,
+    dest="startpage",
+    default="1",
+    help="masukkan start page",
+)
+
+
 args = parser.parse_args()
 page = args.page
 file_name = args.file_name
 headless = args.headless
+startpage = args.startpage
 
 
 def runbrowser(headless):
@@ -95,6 +106,7 @@ def get_data(link):
     jumlahdl = soup.find("div", attrs={"title": "Jumlah download"}).get_text()
     table = soup.find("table")
     df = pd.read_html(str(table))[0]
+    df = df.dropna()
     df = df.T
     df.columns = df.iloc[0]
     df = df.rename(columns={df.columns[0]: "Judul"})
@@ -102,19 +114,22 @@ def get_data(link):
     df["Jumlah View"] = jumlahview
     df["Jumlah Download"] = jumlahdl
     df["Link"] = link
+    df = df[df.columns.drop(list(df.columns[df.columns.str.len() == 1]))]
     return df
 
 
 driver = runbrowser(headless)
 # page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
 page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
+print("Start scraping " + page)
 driver.get(page)
 
-timenow = datetime.datetime.now().strftime("%m-%d-%Y")
 last_page = get_last_page()
 
 result = pd.DataFrame(None)
-for i in range(1, int(last_page) + 1):
+for i in range(int(startpage), int(last_page) + 1):
+    timenow = datetime.datetime.now().strftime("%m-%d-%Y %H %M")
+    
     print("=========== Scraping Page " + str(i) + " ===========")
     driver.get(page + "&page=" + str(i))
     links = get_link()
@@ -122,7 +137,11 @@ for i in range(1, int(last_page) + 1):
         df = get_data(link)
         result = result.append(df)
     print("Total data: " + str(result.shape[0]))
+    
+    # Backup tmp
+    if i % 25 == 0:
+        result.to_csv(str(file_name) + str(timenow) + ".csv", index=False)
 
 # Export to '.csv'
-result.to_csv(file_name + str(timenow) + ".csv", index=False)
+result.to_csv(str(file_name) + str(timenow) + ".csv", index=False)
 driver.quit()
