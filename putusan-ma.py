@@ -39,16 +39,18 @@ parser.add_argument(
 parser.add_argument(
     "-he",
     "--headless",
-    required=False,
     dest="headless",
+    required=False,
     default=False,
-    help="masukkan nama output file, misal UUITE",
+    action="store_true",
+    help="(optional) headless",
 )
 
 args = parser.parse_args()
 page = args.page
 file_name = args.file_name
 headless = args.headless
+
 
 def runbrowser(headless):
     options = webdriver.ChromeOptions()
@@ -112,8 +114,8 @@ timenow = datetime.datetime.now().strftime("%m-%d-%Y")
 last_page = get_last_page()
 
 result = pd.DataFrame(None)
-for i in range(1, int(last_page)+1):
-    print("=========== Scraping Page " + str(i) + "===========")
+for i in range(1, int(last_page) + 1):
+    print("=========== Scraping Page " + str(i) + " ===========")
     driver.get(page + "&page=" + str(i))
     links = get_link()
     for link in links:
