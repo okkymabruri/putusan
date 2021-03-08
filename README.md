@@ -1,54 +1,28 @@
 # Putusan Pilkada Mahkamah Agung Indonesia DataScraper
 
 
-Program ini digunakan untuk scraping data pelanggaran pilkada di website [https://putusan3.mahkamahagung.go.id/search.html?q=pilkada](https://putusan3.mahkamahagung.go.id/search.html?q=pilkada)
+Program ini digunakan untuk scraping data di website [https://putusan3.mahkamahagung.go.id/search.html](https://putusan3.mahkamahagung.go.id/search.html)
 
 Silahkan digunakan / dicopy / dimodifikasi agar menjadi bermanfaat.
 
-Tested di Ubuntu 20.04
+Tested di Ubuntu 20.10
 
 
-![scraping1](https://github.com/okkymabruri/putusan-pilkada-scraping/raw/master/image/1.png)
+![scraping1](./img/1.png)
 
-![scraping2](https://github.com/okkymabruri/putusan-pilkada-scraping/raw/master/image/2.png)
+![scraping2](./img/2.png)
+
+## Demo
+![scraping2](./img/demo.gif)
 
 ## Prerequisites
 
-#### Update dan Install Package
-```
-sudo apt-get update
-sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4
-```
-#### Install Oracle Java 8
-```
-sudo apt-get install default-jdk
-```
-#### Install Google Chrome
-```
-sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add
-sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-sudo apt-get -y update
-sudo apt-get -y install google-chrome-stable
-```
-#### Instalasi Chrome Driver
-```
-wget https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-sudo mv chromedriver /usr/local/bin
-sudo chown root:root /usr/local/bin/chromedriver
-sudo chmod +x /usr/local/bin/chromedriver
-```
-#### Install Selenium
-```
-pip install selenium
-```
-
 ## Menjalankan Program
 ```
-git clone https://github.com/okkymabruri/putusan-pilkada-scraping.git
-cd putusan-pilkada-scraping/
+git clone https://github.com/okkymabruri/putusan-mahkamahagung
+cd putusan-mahkamahagung/
 pip install -r requirements.txt
-python3 scraping.py
+python putusan-ma.py -p https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56 -o putusanUUITE
 ```
 
 ## Sumber
