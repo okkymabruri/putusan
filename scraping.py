@@ -4,7 +4,9 @@
 from selenium import webdriver # webdriver from selenium framework to load web
 import pandas as pd # pandas library fpr data processing
 import time # time library to manipulate time (pause, etc)
+import datetime
 
+timenow = datetime.datetime.now().strftime("%m-%d-%Y")
 # Webdriver setup, you can use Chrome or Firefor
 options = webdriver.ChromeOptions()
 # options = webdriver.FirefoxOptions()  # if use firefox (firefox fast than chrome but more inconsistency
@@ -119,6 +121,6 @@ for i in range(1, 138):
     print(data)
 
     # Export to 'output.xlsx'
-    data.to_excel("output.xlsx")
+    data.to_excel("./output" + str(timenow) + ".xlsx", index=Fasle)
 
 driver.quit()
