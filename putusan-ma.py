@@ -106,6 +106,7 @@ def get_data(link):
     jumlahdl = soup.find("div", attrs={"title": "Jumlah download"}).get_text()
     table = soup.find("table")
     df = pd.read_html(str(table))[0]
+    df = df.iloc[:, :2]
     df = df.dropna()
     df = df.T
     df.columns = df.iloc[0]
@@ -114,13 +115,13 @@ def get_data(link):
     df["Jumlah View"] = jumlahview
     df["Jumlah Download"] = jumlahdl
     df["Link"] = link
-    df = df[df.columns.drop(list(df.columns[df.columns.str.len() == 1]))]
+    df = df[df.columns.drop(list(df.columns[df.columns.str.len() < 4]))]
     return df
 
 
 driver = runbrowser(headless)
 # page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
-page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
+# page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
 print("Start scraping " + page)
 driver.get(page)
 
@@ -136,7 +137,7 @@ for i in range(int(startpage), int(last_page) + 1):
     for link in links:
         df = get_data(link)
         result = result.append(df)
-    print("Total data: " + str(result.shape[0]))
+    print("Total data: " + str(result.shape[0]), ", Kolom: ", str(result.shape[1]))
     
     # Backup tmp
     if i % 25 == 0:
