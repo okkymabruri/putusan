@@ -121,7 +121,7 @@ def get_data(link):
 
 driver = runbrowser(headless)
 # page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
-# page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
+page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
 print("Start scraping " + page)
 driver.get(page)
 
