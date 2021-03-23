@@ -16,20 +16,20 @@ Tested di Ubuntu 20.10
 ![scraping2](./img/demo.gif)
 
 ## Usage
+```
+usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE]
 
->usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE]
->
->Putusan Mahkamah Agung Scraper
->
->optional arguments:
->  -h, --help            show this help message and exit
->  -p PAGE, --page PAGE  Masukkan link pencarian putusan pilkada
->  -o FILE_NAME, --output FILE_NAME
->                        masukkan nama output file, misal UUITE
->  -he, --headless       (optional) headless
->  -sp STARTPAGE, --startpage STARTPAGE
->                        masukkan start page
+Putusan Mahkamah Agung Scraper
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PAGE, --page PAGE  Masukkan link pencarian putusan pilkada
+  -o FILE_NAME, --output FILE_NAME
+                        masukkan nama output file, misal UUITE
+  -he, --headless       (optional) headless
+  -sp STARTPAGE, --startpage STARTPAGE
+                        masukkan start page
+```
 
 ## How to use
 ```
