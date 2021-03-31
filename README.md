@@ -17,7 +17,7 @@ Tested di Ubuntu 20.10
 
 ## Usage
 ```
-usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE]
+usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE] [-ep LAST_PAGE]
 
 Putusan Mahkamah Agung Scraper
 
@@ -29,6 +29,8 @@ optional arguments:
   -he, --headless       (optional) headless
   -sp STARTPAGE, --startpage STARTPAGE
                         masukkan start page
+  -ep LAST_PAGE, --endpage LAST_PAGE
+                        masukkan end page
 ```
 
 ## How to use
@@ -39,10 +41,5 @@ pip install -r requirements.txt
 python putusan-ma.py -p https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56 -o putusanUUITE
 ```
 
-## Reference
-
-Thanks to:
-
-* https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
-* https://towardsdatascience.com/web-scraping-using-selenium-python-8a60f4cf40ab
+## Thanks to:
 * [Perhimpunan Pengembangan Media Nusantara](https://ppmn.or.id/)
