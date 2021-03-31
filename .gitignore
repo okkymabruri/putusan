@@ -3,6 +3,7 @@
 *.csv
 *.pdf
 *.docx
+.idea/
 
 
 # Byte-compiled / optimized / DLL files
