@@ -5,22 +5,20 @@
 #################################################################################
 
 import argparse
-
 # Importing packages
 import datetime  # module datetime for dealing with dates and times
+import io
 import re  # regex
+import ssl
 import time  # time library to manipulate time (pause, etc)
+import urllib.request
 
 import pandas as pd  # pandas library fpr data processing
 from bs4 import BeautifulSoup
+from pdfminer import high_level
 from selenium import webdriver  # webdriver from selenium framework to load web
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
-import io
-import urllib.request
-import ssl
-from pdfminer import high_level
-
 
 parser = argparse.ArgumentParser(
     description="Putusan Mahkamah Agung Scraper", add_help=True
@@ -69,12 +67,26 @@ parser.add_argument(
     help="masukkan end page",
 )
 
+parser.add_argument(
+    "-sd",
+    "--sortdate",
+    dest="sortdate",
+    required=False,
+    default=False,
+    action="store_true",
+    help="(optional) sort date",
+)
+
+parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                    action="store_true")
+
 args = parser.parse_args()
 page = args.page
 file_name = args.file_name
 headless = args.headless
 startpage = args.startpage
 last_page = args.last_page
+sortdate = args.sortdate
 
 def runbrowser(headless):
     options = webdriver.ChromeOptions()
@@ -178,7 +190,8 @@ def get_data(link):
 
 driver = runbrowser(headless)
 # page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
-page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
+if sortdate == True:
+    page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
 driver.get(page)
 
 if last_page == None:
@@ -194,9 +207,14 @@ for i in range(int(startpage), int(last_page) + 1):
     print("=========== Scraping Page " + str(i) + " ===========")
     driver.get(page + "&page=" + str(i))
     links = get_link()
+    if len(links) < 2:
+        driver.get(page + "/page/" + str(i) + ".html")
+        links = get_link()
     for link in links:
-        df = get_data(link)
+        if args.verbose:
+            print("scraping " + link)
         try:
+            df = get_data(link)
             result = result.append(df)
         except:
             pass

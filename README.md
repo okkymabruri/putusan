@@ -17,7 +17,7 @@ Tested di Ubuntu 20.10
 
 ## Usage
 ```
-usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE] [-ep LAST_PAGE]
+usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE] [-ep LAST_PAGE] [-sd] [-v]
 
 Putusan Mahkamah Agung Scraper
 
@@ -31,6 +31,8 @@ optional arguments:
                         masukkan start page
   -ep LAST_PAGE, --endpage LAST_PAGE
                         masukkan end page
+  -sd, --sortdate       (optional) sort date
+  -v, --verbose         increase output verbosity
 ```
 
 ## How to use
