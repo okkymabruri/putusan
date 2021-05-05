@@ -5,6 +5,7 @@
 #################################################################################
 
 import argparse
+
 # Importing packages
 import datetime  # module datetime for dealing with dates and times
 import io
@@ -77,8 +78,9 @@ parser.add_argument(
     help="(optional) sort date",
 )
 
-parser.add_argument("-v", "--verbose", help="increase output verbosity",
-                    action="store_true")
+parser.add_argument(
+    "-v", "--verbose", help="increase output verbosity", action="store_true"
+)
 
 args = parser.parse_args()
 page = args.page
@@ -87,6 +89,7 @@ headless = args.headless
 startpage = args.startpage
 last_page = args.last_page
 sortdate = args.sortdate
+
 
 def runbrowser(headless):
     options = webdriver.ChromeOptions()
@@ -122,12 +125,14 @@ def get_link():
     ]
     return links
 
+
 def get_pdf(url):
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     open = urllib.request.urlopen(url, context=ctx).read()
     return io.BytesIO(open)
+
 
 def clean_text(text):
     text = text.replace("M a h ka m a h A g u n g R e p u blik In d o n esia\n", "")
@@ -155,7 +160,6 @@ def get_data(link):
     driver.get(link)
     html = driver.page_source
     soup = BeautifulSoup(html, "html.parser")
-    
 
     table = soup.find("table")
     df = pd.read_html(str(table))[0]
@@ -165,7 +169,7 @@ def get_data(link):
     df.columns = df.iloc[0]
     df = df.rename(columns={df.columns[0]: "Judul"})
     df = df[1:]
-    
+
     try:
         jumlahview = soup.find("div", attrs={"title": "Jumlah view"}).get_text()
         jumlahdl = soup.find("div", attrs={"title": "Jumlah download"}).get_text()
@@ -181,52 +185,55 @@ def get_data(link):
         df["Textpdf"] = text_pdf
     except:
         pass
-    
+
     df["Link"] = link
     df = df[df.columns.drop(list(df.columns[df.columns.str.len() < 4]))]
-    
+
     return df
 
 
-driver = runbrowser(headless)
-# page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
-if sortdate == True:
-    page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
-driver.get(page)
+if __name__ == "__main__":
+    driver = runbrowser(headless)
+    # page = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56"
+    if sortdate == True:
+        page = page + "&obf=TANGGAL_PUTUS&obm=desc"  # sort by tanggal putusan
+    driver.get(page)
 
-if last_page == None:
-    last_page = get_last_page()
+    if last_page == None:
+        last_page = get_last_page()
 
-print("Start scraping " + page)
-print("From page " + startpage + " to page " + last_page)
-    
-result = pd.DataFrame(None)
-for i in range(int(startpage), int(last_page) + 1):
-    timenow = datetime.datetime.now().strftime("%m-%d-%Y %H %M")
-    
-    print("=========== Scraping Page " + str(i) + " ===========")
-    driver.get(page + "&page=" + str(i))
-    links = get_link()
-    if len(links) < 2:
-        driver.get(page + "/page/" + str(i) + ".html")
+    print("Start scraping " + page)
+    print("From page " + startpage + " to page " + last_page)
+
+    result = pd.DataFrame(None)
+    for i in range(int(startpage), int(last_page) + 1):
+        timenow = datetime.datetime.now().strftime("%m-%d-%Y %H %M")
+
+        print("=========== Scraping Page " + str(i) + " ===========")
+        driver.get(page + "&page=" + str(i))
         links = get_link()
-    for link in links:
-        if args.verbose:
-            print("scraping " + link)
-        try:
-            df = get_data(link)
-            result = result.append(df)
-        except:
-            pass
-    print("Total data: " + str(result.shape[0]), ", Kolom: ", str(result.shape[1]))
-    
-    # Backup tmp
-    if i % 25 == 0:
-        result.dropna(axis=1, thresh=len(result)*3/4).to_csv(str(file_name) + str(timenow) + ".csv", index=False)
+        if len(links) < 2:
+            driver.get(page + "/page/" + str(i) + ".html")
+            links = get_link()
+        for link in links:
+            if args.verbose:
+                print("scraping " + link)
+            try:
+                df = get_data(link)
+                result = result.append(df)
+            except:
+                pass
+        print("Total data: " + str(result.shape[0]), ", Kolom: ", str(result.shape[1]))
 
-# dropna column with treshold 75% value NA
-result = result.dropna(axis=1, thresh=len(result)*3/4)
+        # Backup tmp
+        if i % 25 == 0:
+            result.dropna(axis=1, thresh=len(result) * 3 / 4).to_csv(
+                str(file_name) + str(timenow) + ".csv", index=False
+            )
 
-# Export to '.csv'
-result.to_csv(str(file_name) + str(timenow) + ".csv", index=False)
-driver.quit()
+    # dropna column with treshold 75% value NA
+    result = result.dropna(axis=1, thresh=len(result) * 3 / 4)
+
+    # Export to '.csv'
+    result.to_csv(str(file_name) + str(timenow) + ".csv", index=False)
+    driver.quit()
