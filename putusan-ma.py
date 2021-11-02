@@ -1,8 +1,8 @@
-#################################################################################
-# author: Okky Mabruri
-# email: okkymabrur@gmail.com
-# usage: python putusan-ma.py -p https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56 -o putusanUUITE
-#################################################################################
+"""
+author: Okky Mabruri
+maintainer: Okky Mabruri <okkymbrur@gmail.com>
+usage: python putusan-ma.py -p https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56 -o putusanUUITE
+"""
 
 import argparse
 

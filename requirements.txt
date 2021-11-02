@@ -1,4 +1,5 @@
-selenium==3.141.0
-pandas==1.2.3
-webdriver_manager==3.2.2
-beautifulsoup4==4.9.3
+pandas
+selenium
+webdriver_manager
+beautifulsoup4
+pdfminer
