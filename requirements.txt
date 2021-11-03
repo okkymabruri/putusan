@@ -1,5 +1,6 @@
-pandas
 selenium
+pandas
+requests
 webdriver_manager
+pdfminer.six
 beautifulsoup4
-pdfminer
