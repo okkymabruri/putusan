@@ -29,7 +29,7 @@ def get_args(argv=None):
         "--keyword",
         required=True,
         dest="keyword",
-        help="Masukkan keyword pencarian putusan pilkada",
+        help="Masukkan keyword pencarian putusan mahkamah agung",
     )
 
     return parser.parse_args(argv)
@@ -65,11 +65,11 @@ def get_pdf(url, path_pdf):
     # file = urllib.request.urlopen(url), context=ctx).read()
     file = urllib.request.urlopen(url)
     file_name = file.info().get_filename().replace("/", " ")
-    with file, open(f"{path_pdf}/file_name", "wb") as out_file:
+    with file, open(f"{path_pdf}/{file_name}", "wb") as out_file:
         file = file.read()
         out_file.write(file)
 
-    return io.BytesIO(file)
+    return io.BytesIO(file), file_name
 
 
 def clean_text(text):
@@ -100,9 +100,6 @@ def extract_data(link, keyword, path_output, path_pdf):
     judul = table.find("h2").text
     soup.find("table", {"class": "table"}).find("h2").decompose()
 
-    judul = table.find("h2").text
-    soup.find("table", {"class": "table"}).find("h2").decompose()
-
     nomor = get_detail(table, "Nomor")
     tingkat_proses = get_detail(table, "Tingkat Proses")
     klasifikasi = get_detail(table, "Klasifikasi")
@@ -124,11 +121,13 @@ def extract_data(link, keyword, path_output, path_pdf):
 
     try:
         link_pdf = soup.find("a", href=re.compile(r"/pdf/"))["href"]
-        text_pdf = high_level.extract_text(get_pdf(link_pdf, path_pdf))
+        file_pdf, file_name_pdf = get_pdf(link_pdf, path_pdf)
+        text_pdf = high_level.extract_text(file_pdf)
         text_pdf = clean_text(text_pdf)
     except:
         link_pdf = ""
         text_pdf = ""
+        file_name_pdf = ""
 
     data = [
         judul,
@@ -152,6 +151,8 @@ def extract_data(link, keyword, path_output, path_pdf):
         abstrak,
         link,
         link_pdf,
+        file_name_pdf,
+        text_pdf,
     ]
     result = pd.DataFrame(
         [data],
@@ -177,6 +178,8 @@ def extract_data(link, keyword, path_output, path_pdf):
             "abstrak",
             "link",
             "link_pdf",
+            "file_name_pdf",
+            "text_pdf",
         ],
     )
 
@@ -191,8 +194,7 @@ def extract_data(link, keyword, path_output, path_pdf):
         result.to_csv(f"{destination}.csv", mode="a", header=False, index=False)
 
 
-def run_process(keyword, page, path_output):
-
+def run_process(keyword, page, path_output, path_pdf):
     link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page={page}"
     print(link)
 
@@ -200,7 +202,7 @@ def run_process(keyword, page, path_output):
     links = soup.find_all("a", {"href": re.compile("/direktori/putusan")})
 
     for link in links:
-        extract_data(link["href"], keyword, path_output)
+        extract_data(link["href"], keyword, path_output,path_pdf)
 
 
 if __name__ == "__main__":
@@ -210,7 +212,7 @@ if __name__ == "__main__":
     path_output = utils.create_path("putusan")
     path_pdf = utils.create_path("pdf-putusan")
 
-    link = "https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page=1"
+    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page=1"
 
     soup = open_page(link)
 
@@ -219,11 +221,11 @@ if __name__ == "__main__":
         soup.find("div", {"class": "col-md-7"}).get_text().strip(),
     ).group(1)
 
-    last_page = soup.find_all("a", {"class": "page-link"})[-1].get(
+    last_page = int(soup.find_all("a", {"class": "page-link"})[-1].get(
         "data-ci-pagination-page"
-    )
+    ))
 
-    print(f"Scraping {total_data} data, {last_page} page")
+    print(f"Scraping with keyword: {keyword} - {total_data} data - {last_page} page")
 
     futures = []
     with ThreadPoolExecutor() as executor:
