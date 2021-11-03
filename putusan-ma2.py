@@ -228,7 +228,7 @@ if __name__ == "__main__":
     print(f"Scraping with keyword: {keyword} - {total_data} data - {last_page} page")
 
     futures = []
-    with ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor(max_workers=4) as executor:
         for page in range(last_page):
             futures.append(
                 executor.submit(run_process, keyword, page + 1, path_output, path_pdf)
