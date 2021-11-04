@@ -95,6 +95,8 @@ def clean_text(text):
 
 
 def extract_data(link, keyword, path_output, path_pdf):
+    global today
+    
     soup = open_page(link)
     table = soup.find("table", {"class": "table"})
     judul = table.find("h2").text
@@ -186,7 +188,7 @@ def extract_data(link, keyword, path_output, path_pdf):
     keyword = keyword.replace("/", " ")
 
     destination = (
-        f'{path_output}/putusan_ma_{keyword}_{date.today().strftime("%Y-%m-%d")}'
+        f'{path_output}/putusan_ma_{keyword}_{today}'
     )
     if not os.path.isfile(f"{destination}.csv"):
         result.to_csv(f"{destination}.csv", header=True, index=False)
@@ -211,6 +213,8 @@ if __name__ == "__main__":
     # keyword = "Pdt.Sus-BPSK"
     path_output = utils.create_path("putusan")
     path_pdf = utils.create_path("pdf-putusan")
+    
+    today = date.today().strftime("%Y-%m-%d")
 
     link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page=1"
 
