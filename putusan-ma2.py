@@ -195,14 +195,14 @@ def extract_data(link, keyword, path_output, path_pdf):
 
 
 def run_process(keyword, page, path_output, path_pdf):
-    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page={page}"
+    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page={page}"
     print(link)
 
     soup = open_page(link)
     links = soup.find_all("a", {"href": re.compile("/direktori/putusan")})
 
     for link in links:
-        extract_data(link["href"], keyword, path_output,path_pdf)
+        extract_data(link["href"], keyword, path_output, path_pdf)
 
 
 if __name__ == "__main__":
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     path_output = utils.create_path("putusan")
     path_pdf = utils.create_path("pdf-putusan")
 
-    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page=1"
+    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page=1"
 
     soup = open_page(link)
 
@@ -221,9 +221,9 @@ if __name__ == "__main__":
         soup.find("div", {"class": "col-md-7"}).get_text().strip(),
     ).group(1)
 
-    last_page = int(soup.find_all("a", {"class": "page-link"})[-1].get(
-        "data-ci-pagination-page"
-    ))
+    last_page = int(
+        soup.find_all("a", {"class": "page-link"})[-1].get("data-ci-pagination-page")
+    )
 
     print(f"Scraping with keyword: {keyword} - {total_data} data - {last_page} page")
 
