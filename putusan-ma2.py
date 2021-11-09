@@ -3,21 +3,21 @@ author: Okky Mabruri
 maintainer: Okky Mabruri <okkymbrur@gmail.com>
 """
 
+import argparse
+import io
+import os
+import re
+import ssl
+import time
+import urllib
+from concurrent.futures import ThreadPoolExecutor, wait
+from datetime import date
+
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import re
-import io
-import urllib
 from pdfminer import high_level
-import ssl
-import time
-import os
-from requests.models import Response
-from concurrent.futures import ThreadPoolExecutor, wait
-from datetime import date, datetime
 import utils
-import argparse
 
 
 def get_args(argv=None):
@@ -30,6 +30,15 @@ def get_args(argv=None):
         required=True,
         dest="keyword",
         help="Masukkan keyword pencarian putusan mahkamah agung",
+    )
+    parser.add_argument(
+        "-sd",
+        "--sortdate",
+        dest="sort_date",
+        required=False,
+        default=False,
+        action="store_true",
+        help="(optional) scraping from newest putusan. Default False",
     )
 
     return parser.parse_args(argv)
@@ -96,7 +105,7 @@ def clean_text(text):
 
 def extract_data(link, keyword, path_output, path_pdf):
     global today
-    
+
     soup = open_page(link)
     table = soup.find("table", {"class": "table"})
     judul = table.find("h2").text
@@ -187,17 +196,17 @@ def extract_data(link, keyword, path_output, path_pdf):
 
     keyword = keyword.replace("/", " ")
 
-    destination = (
-        f'{path_output}/putusan_ma_{keyword}_{today}'
-    )
+    destination = f"{path_output}/putusan_ma_{keyword}_{today}"
     if not os.path.isfile(f"{destination}.csv"):
         result.to_csv(f"{destination}.csv", header=True, index=False)
     else:
         result.to_csv(f"{destination}.csv", mode="a", header=False, index=False)
 
 
-def run_process(keyword, page, path_output, path_pdf):
-    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page={page}"
+def run_process(keyword, page, path_output, path_pdf, sort_page):
+    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page={page}"
+    if sort_page:
+        link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page={page}"
     print(link)
 
     soup = open_page(link)
@@ -210,13 +219,15 @@ def run_process(keyword, page, path_output, path_pdf):
 if __name__ == "__main__":
     args = get_args()
     keyword = args.keyword
+    sort_date = args.sort_date
+
     # keyword = "Pdt.Sus-BPSK"
     path_output = utils.create_path("putusan")
     path_pdf = utils.create_path("pdf-putusan")
-    
+
     today = date.today().strftime("%Y-%m-%d")
 
-    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page=1"
+    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page=1"
 
     soup = open_page(link)
 
@@ -235,6 +246,8 @@ if __name__ == "__main__":
     with ThreadPoolExecutor(max_workers=4) as executor:
         for page in range(last_page):
             futures.append(
-                executor.submit(run_process, keyword, page + 1, path_output, path_pdf)
+                executor.submit(
+                    run_process, keyword, page + 1, path_output, path_pdf, sort_date
+                )
             )
     wait(futures)
