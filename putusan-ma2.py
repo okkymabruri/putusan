@@ -7,7 +7,6 @@ import argparse
 import io
 import os
 import re
-import ssl
 import time
 import urllib
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -15,9 +14,9 @@ from datetime import date
 
 import pandas as pd
 import requests
+import utils
 from bs4 import BeautifulSoup
 from pdfminer import high_level
-import utils
 
 
 def get_args(argv=None):
@@ -231,16 +230,13 @@ if __name__ == "__main__":
 
     soup = open_page(link)
 
-    total_data = re.search(
-        "Ditemukan ([0-9]+) data",
-        soup.find("div", {"class": "col-md-7"}).get_text().strip(),
-    ).group(1)
-
     last_page = int(
         soup.find_all("a", {"class": "page-link"})[-1].get("data-ci-pagination-page")
     )
 
-    print(f"Scraping with keyword: {keyword} - {total_data} data - {last_page} page")
+    print(
+        f"Scraping with keyword: {keyword} - {20 * last_page} data - {last_page} page"
+    )
 
     futures = []
     with ThreadPoolExecutor(max_workers=4) as executor:
