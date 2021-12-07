@@ -1,9 +1,9 @@
-# Putusan Pilkada Mahkamah Agung Indonesia DataScraper
+# Putusan Mahkamah Agung / Supreme Court Data Scraper
 
 
-Program ini digunakan untuk scraping data di website [https://putusan3.mahkamahagung.go.id/search.html](https://putusan3.mahkamahagung.go.id/search.html)
+This code is used for scraping data on the website: [https://putusan3.mahkamahagung.go.id/search.html](https://putusan3.mahkamahagung.go.id/search.html)
 
-Silahkan digunakan / dicopy / dimodifikasi agar menjadi bermanfaat.
+Feel free to copy/modify.
 
 
 ![scraping1](./img/1.png)
@@ -12,14 +12,15 @@ Silahkan digunakan / dicopy / dimodifikasi agar menjadi bermanfaat.
 
 ## Usage
 ```
-usage: putusan-ma.py [-h] -p PAGE [-o FILE_NAME] [-he] [-sp STARTPAGE] [-ep LAST_PAGE] [-sd] [-v]
+usage: putusan-ma.py [-h] -k KEYWORD [-sd]
 
 Putusan Mahkamah Agung Scraper
 
 optional arguments:
   -h, --help            show this help message and exit
   -k KEYWORD, --keyword KEYWORD
-                        Masukkan keyword pencarian putusan mahkamah agung
+                        keyword for the Supreme Court
+  -sd, --sortdate       (optional) scraping from newest putusan. Default False
 ```
 
 ## How to use

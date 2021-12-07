@@ -28,7 +28,7 @@ def get_args(argv=None):
         "--keyword",
         required=True,
         dest="keyword",
-        help="Masukkan keyword pencarian putusan mahkamah agung",
+        help="keyword for the Supreme Court",
     )
     parser.add_argument(
         "-sd",
