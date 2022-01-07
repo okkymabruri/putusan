@@ -67,10 +67,6 @@ def get_detail(soup, keyword):
 
 
 def get_pdf(url, path_pdf):
-    # ctx = ssl.create_default_context()
-    # ctx.check_hostname = False
-    # ctx.verify_mode = ssl.CERT_NONE
-    # file = urllib.request.urlopen(url), context=ctx).read()
     file = urllib.request.urlopen(url)
     file_name = file.info().get_filename().replace("/", " ")
     with file, open(f"{path_pdf}/{file_name}", "wb") as out_file:

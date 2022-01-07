@@ -31,4 +31,4 @@ pip install -r requirements.txt
 python putusan-ma.py -k "korupsi"
 ```
 
-Tested di Ubuntu 21.10
+Tested on Python 3.9 and Ubuntu 21.10
