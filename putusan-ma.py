@@ -26,9 +26,16 @@ def get_args(argv=None):
     parser.add_argument(
         "-k",
         "--keyword",
-        required=True,
+        required=False,
         dest="keyword",
         help="keyword for the Supreme Court",
+    )
+    parser.add_argument(
+        "-u",
+        "--url",
+        required=False,
+        dest="url",
+        help=" specify url for the Supreme Court\nexample: https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56",
     )
     parser.add_argument(
         "-sd",
@@ -39,7 +46,15 @@ def get_args(argv=None):
         action="store_true",
         help="(optional) scraping from newest putusan. Default False",
     )
-
+    parser.add_argument(
+        "-dp",
+        "--downloadpdf",
+        dest="download_pdf",
+        required=False,
+        default=False,
+        action="store_true",
+        help="(optional) download pdf. Default False",
+    )
     return parser.parse_args(argv)
 
 
@@ -66,12 +81,13 @@ def get_detail(soup, keyword):
         return ""
 
 
-def get_pdf(url, path_pdf):
+def get_pdf(url, path_pdf, download_pdf):
     file = urllib.request.urlopen(url)
     file_name = file.info().get_filename().replace("/", " ")
     with file, open(f"{path_pdf}/{file_name}", "wb") as out_file:
         file = file.read()
-        out_file.write(file)
+        if download_pdf:
+            out_file.write(file)
 
     return io.BytesIO(file), file_name
 
@@ -98,8 +114,11 @@ def clean_text(text):
     return text
 
 
-def extract_data(link, keyword, path_output, path_pdf):
+def extract_data(link, keyword_url):
     global today
+    global path_output
+    global path_pdf
+    global download_pdf
 
     soup = open_page(link)
     table = soup.find("table", {"class": "table"})
@@ -127,7 +146,7 @@ def extract_data(link, keyword, path_output, path_pdf):
 
     try:
         link_pdf = soup.find("a", href=re.compile(r"/pdf/"))["href"]
-        file_pdf, file_name_pdf = get_pdf(link_pdf, path_pdf)
+        file_pdf, file_name_pdf = get_pdf(link_pdf, path_pdf, download_pdf)
         text_pdf = high_level.extract_text(file_pdf)
         text_pdf = clean_text(text_pdf)
     except:
@@ -189,32 +208,45 @@ def extract_data(link, keyword, path_output, path_pdf):
         ],
     )
 
-    keyword = keyword.replace("/", " ")
+    keyword_url = keyword_url.replace("/", " ")
+    if keyword_url.startswith("https"):
+        keyword_url = ""
 
-    destination = f"{path_output}/putusan_ma_{keyword}_{today}"
+    destination = f"{path_output}/putusan_ma_{keyword_url}_{today}"
+    print(destination)
     if not os.path.isfile(f"{destination}.csv"):
         result.to_csv(f"{destination}.csv", header=True, index=False)
     else:
         result.to_csv(f"{destination}.csv", mode="a", header=False, index=False)
 
 
-def run_process(keyword, page, path_output, path_pdf, sort_page):
-    link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page={page}"
+def run_process(keyword_url, page, sort_page):
+
+    if keyword_url.startswith("https"):
+        link = f"{keyword_url}&page={page}"
+    else:
+        link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword_url}&page={page}"
     if sort_page:
-        link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&obf=TANGGAL_PUTUS&obm=desc&page={page}"
+        link = f"{link}&obf=TANGGAL_PUTUS&obm=desc"
+
     print(link)
 
     soup = open_page(link)
     links = soup.find_all("a", {"href": re.compile("/direktori/putusan")})
 
     for link in links:
-        extract_data(link["href"], keyword, path_output, path_pdf)
+        extract_data(link["href"], keyword_url)
 
 
 if __name__ == "__main__":
     args = get_args()
     keyword = args.keyword
+    url = args.url
     sort_date = args.sort_date
+    download_pdf = args.download_pdf
+
+    if not keyword and not url:
+        exit("Please provide keyword or URL")
 
     # keyword = "Pdt.Sus-BPSK"
     path_output = utils.create_path("putusan")
@@ -224,22 +256,34 @@ if __name__ == "__main__":
 
     link = f"https://putusan3.mahkamahagung.go.id/search.html?q={keyword}&page=1"
 
+    if url:
+        link = url
+
     soup = open_page(link)
 
     last_page = int(
         soup.find_all("a", {"class": "page-link"})[-1].get("data-ci-pagination-page")
     )
 
-    print(
-        f"Scraping with keyword: {keyword} - {20 * last_page} data - {last_page} page"
-    )
+    if url:
+        print(f"Scraping with url: {url} - {20 * last_page} data - {last_page} page")
+    else:
+        print(
+            f"Scraping with keyword: {keyword} - {20 * last_page} data - {last_page} page"
+        )
+
+    # url = "https://putusan3.mahkamahagung.go.id/search.html?q=&jenis_doc=&cat=98821d8a4bc63aff3a81f66c37934f56"
+    # url = "https://putusan3.mahkamahagung.go.id/search.html?cat=98821d8a4bc63aff3a81f66c37934f56&page=2"
+
+    if url:
+        keyword_url = url
+    else:
+        keyword_url = keyword
 
     futures = []
     with ThreadPoolExecutor(max_workers=4) as executor:
         for page in range(last_page):
             futures.append(
-                executor.submit(
-                    run_process, keyword, page + 1, path_output, path_pdf, sort_date
-                )
+                executor.submit(run_process, keyword_url, page + 1, sort_date)
             )
     wait(futures)
