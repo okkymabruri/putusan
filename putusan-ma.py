@@ -85,7 +85,7 @@ def get_pdf(url, path_pdf, download_pdf):
     file = urllib.request.urlopen(url)
     file_name = file.info().get_filename().replace("/", " ")
     # with file:
-        # file = file.read()
+    # file = file.read()
     file = file.read()
     if download_pdf:
         with open(f"{path_pdf}/{file_name}", "wb") as out_file:
