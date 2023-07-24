@@ -14,9 +14,10 @@ from datetime import date
 
 import pandas as pd
 import requests
-import utils
 from bs4 import BeautifulSoup
 from pdfminer import high_level
+
+import utils
 
 
 def get_args(argv=None):
@@ -223,7 +224,6 @@ def extract_data(link, keyword_url):
 
 
 def run_process(keyword_url, page, sort_page):
-
     if keyword_url.startswith("https"):
         link = f"{keyword_url}&page={page}"
     else:
